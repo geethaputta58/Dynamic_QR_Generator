@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dynamic QR Attendance</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #timer {
+      font-size: 2rem;
+      margin: 10px;
+    }
+    #count {
+      font-size: 1.5rem;
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Scan to Mark Attendance</h1>
+  <img id="qr" src="/qr" width="250" height="250">
+  <div id="timer">Next QR in: 5s</div>
+  <div id="count">QR Count: <span id="qrCount">1</span></div>
+
+  <script>
+    let countdown = 5;
+    let qrCount = 1;
+
+    // Fetch latest QR every 5 seconds
+    setInterval(() => {
+      document.getElementById("qr").src = `/qr?ts=${Date.now()}`;
+      fetch('/qr-count')
+        .then(res => res.json())
+        .then(data => {
+          qrCount = data.count;
+          document.getElementById("qrCount").innerText = qrCount;
+        });
+      countdown = 5;
+    }, 5000);
+
+    // Countdown timer
+    setInterval(() => {
+      countdown--;
+      if (countdown >= 0) {
+        document.getElementById("timer").innerText = `Next QR in: ${countdown}s`;
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
